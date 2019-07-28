@@ -34,26 +34,26 @@ Benchmark results with same data on 1000 random periods, 100 evals/period:
     memory estimate:  0 bytes
     allocs estimate:  0
     --------------
-    minimum time:     9.149  μs (0.00% GC)
-    median time:      9.389  μs (0.00% GC)
-    mean time:        10.179 μs (0.00% GC)
-    maximum time:     36.571 μs (0.00% GC)
+    minimum time:     9.181 μs (0.00% GC)
+    median time:      9.627 μs (0.00% GC)
+    mean time:        9.800 μs (0.00% GC)
+    maximum time:     23.757 μs (0.00% GC)
 
 and mapping over an array of 1000 random periods, 5 runs, 100 evals/run:
 
     memory estimate:  7.95 KiB
     allocs estimate:  2
     --------------
-    minimum time:     10.768 ms (0.00% GC)
-    median time:      11.237 ms (0.00% GC)
-    mean time:        11.173 ms (0.00% GC)
-    maximum time:     11.529 ms (0.00% GC)
+    minimum time:     10.942 ms (0.00% GC)
+    median time:      10.963 ms (0.00% GC)
+    mean time:        10.969 ms (0.00% GC)
+    maximum time:     11.013 ms (0.00% GC)
 
 The benchmraks does count random number generation time.
 
 """
 @inline @fastmath function Complex_NFT(x_arr::Array{Float64,1},y_arr::Array{Float64,1},t_::Float64)
-    s=0.0+0.0im
+    s::ComplexF64=0.0+0.0im
     @simd ivdep for i=1:length(x_arr)
         @inbounds s+=y_arr[i]*exp(-6.283185307179586im*x_arr[i]/t_)
     end
