@@ -3,7 +3,7 @@ function OGLE_file_string(index_::Int64)::String
 end
 
 """
-Read a table of floats from file. If dimensions mismatch, returns zeros(3,3). Can deal with "nan" and "inf" on float table.
+Read a table of floats from file. If dimensions mismatch, returns zeros(3,3). Can deal with "nan" and "inf" on the float table.
 """
 function read_float_table(fname_::String)::Array{Float64,2}
     try 
