@@ -84,13 +84,12 @@ end
 """
     normalize101!(arr_::Array{Float64})
 
-Normalize the array in-place to the range [-1,1]
+Normalize the array in-place to mean=0 and std=1
 
-Is used to feed find_period_ephemeris function; the normalized magnitude eliminates period aliasing due to cuasi-constant sample on the time series.
+Is used to feed find_period_ephemeris function; the normalized magnitude eliminates period aliasing due to cuasi-constant sample on the time series due to phase cancellation on the fourier transform sum.
 """
 function normalize101!(arr_::Array{Float64})
-    arr_.= arr_.-minimum(arr_)
-    arr_.= 2(arr_./maximum(arr_) .- 0.5)
+    arr_.= (arr_.-mean(arr_))./std(arr_)
 end
 
 

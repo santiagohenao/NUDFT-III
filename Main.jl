@@ -4,28 +4,39 @@ using Dates
 include("FileOperations.jl")
 include("MathFunctions.jl")
 
-
-
-JD,M,err=5 |> OGLE_file_string |> read_float_table |> permutedims |> x->[x[:,i] for i in 1:3]
-normalize101!(M)
-dt=10e-4
-per0,eph0=find_period_ephemeris(JD,M,0.1:dt:10.0)
-per,eph=find_period_ephemeris(JD,M,per0-2dt:dt/10^3:per0+2dt)
+function run(star_id::Int64,dt::Float64=10e-4,refine::Float64=10e-3)
+    local start::Float64=time()
+    local JD::Array{Float64,1}
+    local M::Array{Float64,1}
+    local err::Array{Float64,1}
+    local per::Float64
+    local eph::Float64
+    
+    # import data
+    JD,M,err=star_id |> OGLE_file_string |> read_float_table |> permutedims |> x->[x[:,i] for i in 1:3]
+    
+    # chech for gibberish
+    if JD==[0,0,0]
+        return (star_id,0,0)
+    end
+    
+    # normalize magnitude
+    normalize101!(M)
+    
+    # rough search
+    per,eph=find_period_ephemeris(JD,M,0.1:dt:20.0)
+    
+    # refined search
+    per,eph=find_period_ephemeris(JD,M,per-2dt:dt*refine:per+2dt)
+    
+    return (star_id,per,eph,time()-start)
+end
 
 F_numbers=parse.(Int64,(x->x[14:17]).(readdir("./data")))
 
 
 
 for i=F_numbers[1:100]
-    start=time()
-    JD,M,err=i |> OGLE_file_string |> read_float_table |> permutedims |> x->[x[:,i] for i in 1:3]
-    if JD==[0,0,0]
-        continue
-    end
-    normalize101!(M)
-    dt=10e-4
-    per0,eph0=find_period_ephemeris(JD,M,0.1:dt:10.0)
-    per,eph=find_period_ephemeris(JD,M,per0-2dt:dt/10^3:per0+2dt)
-    println("$i\t$(round(per;digits=5))\t\t$(round(time()-start;digits=5))")
+    println(run(i))
 end
 
