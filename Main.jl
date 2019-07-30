@@ -29,7 +29,7 @@ function run(star_id::Int64,dt::Float64=10e-4,refine::Float64=10e-3)
     # refined search
     per,eph=find_period_ephemeris(JD,M,per-2dt:dt*refine:per+2dt)
     
-    return (star_id,per,eph,time()-start)
+    return (star_id,r5(per),r5(eph),r5(time()-start))
 end
 
 F_numbers=parse.(Int64,(x->x[14:17]).(readdir("./data")))

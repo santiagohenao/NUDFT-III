@@ -7,6 +7,15 @@ function loc_max(arr::Array{Float64,1})
     return findmax(arr)[2]
 end
 
+"""
+    function r5(arg_::float64)
+
+Shorcut to Julia's round with 5 digits.
+"""
+function r5(arg_::Float64)
+    return round(arg_;digits=5)
+end
+
 
 """
     Complex_NFT(x_arr::Array{Float64,1},y_arr::Array{Float64,1},t_::Float64)
