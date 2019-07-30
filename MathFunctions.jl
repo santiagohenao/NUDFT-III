@@ -81,12 +81,12 @@ Attempt to find a period and ephemeris of the signal data (X_,Y_) on the Julia r
 
 The ephemeris is found with the formula: period*(arg(F)/2pi+0.25), where the 0.25 counts for displaying the phase as a sin wave.
 
-Returns a tuple (period,ephemeris)
+Returns a tuple (period, ephemeris, magnitude of max fourier transform)
 """
 @inline function find_period_ephemeris(X_::Array{Float64,1},Y_::Array{Float64,1},T_::StepRangeLen{Float64,Base.TwicePrecision{Float64},Base.TwicePrecision{Float64}})
     F::Array{ComplexF64}=map(t->Complex_NFT(X_,Y_,t),T_)
     i=loc_max(abs2.(F))
-    return T_[i], T_[i]*(angle(F[i])/2pi+0.25)
+    return (T_[i], T_[i]*(angle(F[i])/2pi+0.25), abs2(F[i]))
 end
 
 
