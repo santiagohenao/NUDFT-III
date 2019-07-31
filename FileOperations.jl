@@ -10,7 +10,7 @@ function read_float_table(fname_::String)::Array{Float64,2}
         return parse.(Float32,(hcat(split.(readlines(fname_))...)))
     catch err
         if isa(err,DimensionMismatch)
-            println("Read error at file $fname_: not a float table. Returning `zeros(3,3)`")
+            #println("Read error at file $fname_: not a float table. Returning `zeros(3,3)`")
             return zeros(3,3)
         elseif isa(err,ArgumentError)
             println("ArgumentError: "*err.msg*". Returning `zeros(3,3)`")
