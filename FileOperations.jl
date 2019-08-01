@@ -7,7 +7,7 @@ Read a table of floats from file. If dimensions mismatch, returns zeros(3,3). Ca
 """
 function read_float_table(fname_::String)::Array{Float64,2}
     try 
-        return parse.(Float32,(hcat(split.(readlines(fname_))...)))
+        return parse.(Float64,(hcat(split.(readlines(fname_))...)))
     catch err
         if isa(err,DimensionMismatch)
             #println("Read error at file $fname_: not a float table. Returning `zeros(3,3)`")

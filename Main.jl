@@ -3,10 +3,16 @@
 
 @everywhere using Statistics
 @everywhere using Dates
-
 @everywhere include("FileOperations.jl")
 @everywhere include("MathFunctions.jl")
 
+#=
+     run(star_id::Int64,dt::Float64=10e-4,refine::Float64=10e-3)
+
+Search for star_id star on ./data and find a possible period on the interval 0.1-20 days with an initial precision of dt=0.001 days (1:26 seconds) and a refinement of 0.01 (864ms)
+
+Returns tuple with period, ephemeris, and the squared magnitude of the Fourier transform on the period.
+=#
 @everywhere function run(star_id::Int64,dt::Float64=10e-4,refine::Float64=10e-3)
     local start::Float64=time()
     local JD::Array{Float64,1}
@@ -39,14 +45,17 @@ end
 
 # read stars id from data filenames
 const F_numbers=parse.(Int64,(x->x[14:17]).(readdir("./data")))
+
 ####### Compiling run function #########
-#run(2)                                ##
+run(2)                                ##
 ##### does not take this seriously #####
-global_start=time()
+
+
 # declare an (empty) Channel for threads to look which star work on
 const stars = RemoteChannel(()->Channel{Int}(32));
 # declare an (empty) Channel of the type of run(star_id) to put results on
 const results = RemoteChannel(()->Channel{Tuple}(32));
+
 # function to find a period for all the stars
 @everywhere function calculate_stars(stars,results)
     while true
@@ -54,7 +63,7 @@ const results = RemoteChannel(()->Channel{Tuple}(32));
         io = open("$(myid()).dat", append=true);
         s1=time()
         period,ephemeris,quality=run(star_id)
-        write(io,"$(myid())\t$star_id\t$(round(time()-s1; digits=6))\t$period\t$ephemeris\t$quality\n")
+        write(io,"$star_id\t$(round(time()-s1; digits=6))\t$period\t$ephemeris\t$quality\n")
         close(io)
         if period==0.0
             put!(results,("$(myid()), $star_id no data",1))
@@ -71,7 +80,7 @@ function make_stars(n::Int64)
     end
 end
 
-@everywhere n=400
+@everywhere n=100
 
 # creates a task on the general queue
 @async make_stars(n)
@@ -89,9 +98,18 @@ while n > 0
     global n = n - 1
 end
 
-println("elapsed: ",time()-start)
-#println("CPU: ",sum(times))
+data=[read_float_table("$i.dat") for i in workers()]
 
+
+star_numbers=vcat([i[1,:] for i in data]...)
+exec_times=vcat([i[2,:] for i in data]...)
+periods=vcat([i[3,:] for i in data]...)
+ephemerides=vcat([i[4,:] for i in data]...)
+qualities=vcat([i[5,:] for i in data]...)
+
+
+println("CPU time: ",r5(sum(exec_times)))
+println("elapsed: ",time()-start)
 
 
 
