@@ -98,6 +98,7 @@ while n > 0
     global n = n - 1
 end
 
+# read data from workers output
 data=[read_float_table("$i.dat") for i in workers()]
 
 
@@ -107,21 +108,24 @@ periods=vcat([i[3,:] for i in data]...)
 ephemerides=vcat([i[4,:] for i in data]...)
 qualities=vcat([i[5,:] for i in data]...)
 
+# remove workers output
 for i in workers()
     rm("$i.dat")
 end
 
-
+# sort data by star_id
 sorted_data=sortslices(hcat(star_numbers,exec_times,periods,ephemerides,qualities);dims=1,by = x -> x[1])
 
+# write sorted data
 file=open("results.dat",append=true)
 
 for i in 1:length(sorted_data[:,1])
     write(file,join(sorted_data[i,:]," ")*"\n")
 end
 
-println("CPU time: ",r5(sum(exec_times)))
-println("elapsed: ",r5(time()-start))
+# Comparison between CPU and elapsed time
+println("CPU:\t",r5(sum(exec_times)))
+println("elapsed:\t",r5(time()-start))
 
 
 
