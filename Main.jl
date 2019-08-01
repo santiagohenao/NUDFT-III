@@ -80,7 +80,7 @@ function make_stars(n::Int64)
     end
 end
 
-@everywhere n=100
+n=parse(Int64,ARGS[1])
 
 # creates a task on the general queue
 @async make_stars(n)
@@ -107,9 +107,21 @@ periods=vcat([i[3,:] for i in data]...)
 ephemerides=vcat([i[4,:] for i in data]...)
 qualities=vcat([i[5,:] for i in data]...)
 
+for i in workers()
+    rm("$i.dat")
+end
+
+
+sorted_data=sortslices(hcat(star_numbers,exec_times,periods,ephemerides,qualities);dims=1,by = x -> x[1])
+
+file=open("results.dat",append=true)
+
+for i in 1:length(sorted_data[:,1])
+    write(file,join(sorted_data[i,:]," ")*"\n")
+end
 
 println("CPU time: ",r5(sum(exec_times)))
-println("elapsed: ",time()-start)
+println("elapsed: ",r5(time()-start))
 
 
 
