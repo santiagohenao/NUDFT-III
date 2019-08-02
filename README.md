@@ -16,9 +16,9 @@ where n is the desired number of stars
 
 Output file `results.dat`. 5 columns: star id, execution time, period, ephemeris and period quality factor (a.k.a. |F(T)|^2 on period T). Can be loaded on Julia with `read_float_table` from `FileOperations.jl`.
 
-### Benckmark
+### Benchmark
 
-With `n=1000` on Intel Core i3 legacy generation, Windows, quad core, Julia v1.1, CPU time was 805.928s and elapsed (calculation and output) time was 214.733s giving 375.3% of time improvement.
+With `n=1000` on Intel Core i3 (quad core) legacy generation, Windows and Julia v1.1, CPU time was 805.928s and elapsed (calculation and output) time was 214.733s giving 375.3% of time improvement.
 
 ## Data References
 
