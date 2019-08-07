@@ -13,7 +13,7 @@ Search for star_id star on ./data and find a possible period on the interval 0.1
 
 Returns tuple with period, ephemeris, and the squared magnitude of the Fourier transform on the period.
 =#
-@everywhere function run(star_id::Int64,dt::Float64=10e-4,refine::Float64=10e-3)
+@everywhere function run(star_id::Int64,dt::Float64=10e-3,refine::Float64=10e-3)
     local start::Float64=time()
     local JD::Array{Float64,1}
     local M::Array{Float64,1}
@@ -21,24 +21,24 @@ Returns tuple with period, ephemeris, and the squared magnitude of the Fourier t
     local per::Float64
     local eph::Float64
     local Q::Float64 # period quality factor
-    
+
     # import data
     JD,M,err=star_id |> OGLE_file_string |> read_float_table |> permutedims |> x->[x[:,i] for i in 1:3]
-    
+
     # chech for gibberish
     if JD==[0.0,0.0,0.0]
         return (0.0,0.0,0.0)
     end
-    
+
     # normalize magnitude
     normalize101!(M)
-    
+
     # rough search
-    per,eph,Q=find_period_ephemeris(JD,M,0.1:dt:20.0)
-    
+    per,eph,Q=find_period_ephemeris(JD,M,1.0:dt:30.0)
+
     # refined search
     per,eph,Q=find_period_ephemeris(JD,M,per-2dt:dt*refine:per+2dt)
-    
+
     #println(star_id,"\tdone in\t",r5(time()-start))
     return (r5(per),r5(eph),r5(Q))
 end
@@ -126,26 +126,3 @@ end
 # Comparison between CPU and elapsed time
 println("CPU:\t",r5(sum(exec_times)))
 println("elapsed:\t",r5(time()-start))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
