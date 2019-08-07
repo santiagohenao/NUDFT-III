@@ -18,7 +18,7 @@ Output file `results.dat`. 5 columns: star id, execution time, period, ephemeris
 
 ### Benchmark
 
-With `n=1000` on Intel Core i3 (quad core) legacy generation, Windows and Julia v1.1, CPU time was 805.928s and elapsed (calculation and output) time was 214.733s giving 375.3% of time improvement.
+With `n=1840` on Intel Core i3 (quad core) legacy generation, Windows and Julia v1.1, CPU time was 473.475s and elapsed (calculation and output) time was 143.372s giving 330.2% of time improvement.
 
 ## Data References
 
